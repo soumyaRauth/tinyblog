@@ -1,6 +1,6 @@
 /**
  *
- * @param title sentence or word to transform into capitalize
+ * @param title sentence or word to transform into different cases small/all capital/only first letter capital
  * @returns my blog => My Blog
  */
 export const transformCase = (
@@ -10,9 +10,9 @@ export const transformCase = (
   switch (format) {
     case "small":
       return text.toLowerCase();
-    case "capital":
-      return text.toUpperCase();
     case "allcaps":
+      return text.toUpperCase();
+    case "capital":
       //- Capitalize the first letter of each word
       return text
         .toLowerCase()

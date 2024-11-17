@@ -1,4 +1,4 @@
-import { transformCase } from "./Header/lib/utils";
+import { transformCase } from "../lib/utils";
 
 type HeaderProps = {
   title: string;
