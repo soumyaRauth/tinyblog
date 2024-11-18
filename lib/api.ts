@@ -1,23 +1,41 @@
 import { PostTypeProps } from "@/Components/lib/types";
+import { z } from "zod";
 
 const API_URL =
   process.env.API_URL ??
   (() => {
-    throw new Error("API_URL not defined");
+    throw new Error("API URL NOT FOUND ");
   });
 
-export const fetchPosts = async (): Promise<PostTypeProps[]> => {
-  try {
-    const response = await fetch(`${API_URL}/posts`);
+const PostSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string().optional(),
+  body: z.string(),
+});
 
-    if (!response.ok) {
-      throw new Error("Response Error");
-    }
-    const data: PostTypeProps[] = await response.json();
+const PostArraySchema = z.array(PostSchema);
 
-    return data;
-  } catch (error) {
-    console.log(error);
-    throw error;
+export const fetchPosts = async (): Promise<
+  z.infer<typeof PostArraySchema>
+> => {
+  const response = await fetch(`${API_URL}/posts`);
+
+  if (!response.ok) {
+    throw new Error("Could not fetch posts from api endpoint");
   }
+  const data = await response.json();
+  //!special note: This value (data, which is of type PostTypeProps[]) is wrapped in a promise and returned. Any async function automatically returns a Promise
+  const validatedData = PostArraySchema.parse(data);
+  return validatedData;
+};
+
+export const fetchPostsById = async (id: number): Promise<PostTypeProps> => {
+  const response = await fetch(`${API_URL}/posts/${id}`);
+
+  if (!response.ok) {
+    throw new Error("Could not fetch posts from api endpoint");
+  }
+  const data: PostTypeProps = await response.json();
+  return data;
 };
