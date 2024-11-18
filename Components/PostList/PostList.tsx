@@ -6,6 +6,7 @@ import {
   CardContent,
 } from "@/Components/ui/card";
 import { PostTypeProps } from "../lib/types";
+import Link from "next/link";
 
 type PostListProps = {
   posts: PostTypeProps[];
@@ -22,7 +23,15 @@ export const PostList = ({ posts }: PostListProps) => {
               <CardDescription>{post.description}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p>{post.body}</p>
+              <p className="mb-6">{post.body}</p>
+              <div className="text-right">
+                <Link
+                  href={`/posts/${post.id}`}
+                  className="text-blue-500 hover:text-blue-700 font-semibold"
+                >
+                  Read More →
+                </Link>
+              </div>
             </CardContent>
           </Card>
         ))}

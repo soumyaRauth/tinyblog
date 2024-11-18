@@ -30,7 +30,7 @@ export const fetchPosts = async (): Promise<
   return validatedData;
 };
 
-export const fetchPostsById = async (id: number): Promise<PostTypeProps> => {
+export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
   const response = await fetch(`${API_URL}/posts/${id}`);
 
   if (!response.ok) {
