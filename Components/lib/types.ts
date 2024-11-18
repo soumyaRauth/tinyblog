@@ -12,6 +12,6 @@ export type TransformCaseTypeProps = {
 export type PostTypeProps = {
   id: number;
   title: string;
-  description?: string;
+  description: string;
   body: string;
 };

@@ -19,7 +19,7 @@ export const PostList = ({ posts }: PostListProps) => {
           <Card key={post.id} className="hover:shadow-lg">
             <CardHeader>
               <CardTitle>{post.title}</CardTitle>
-              {/* <CardDescription>{post.description}</CardDescription> */}
+              <CardDescription>{post.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>{post.body}</p>

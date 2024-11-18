@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development pnpm next dev",
     "build": "cross-env NODE_ENV=production pnpm next build",
-    "start": "cross-enc NODE_ENV=production pnpm next start",
+    "start": "cross-env NODE_ENV=production pnpm next start",
     "lint": "next lint"
   },
   "dependencies": {
