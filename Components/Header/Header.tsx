@@ -1,12 +1,29 @@
+import {
+  TransformCaseFormatTypeProps,
+  TransformCaseTypeProps,
+} from "../lib/types";
 import { transformCase } from "../lib/utils";
 
 type HeaderProps = {
   title: string;
-  format: "small" | "capital" | "allcaps";
+  format: TransformCaseFormatTypeProps;
 };
-
+/**
+ *
+ * @param {title:string,format:TransformCaseFormatTypeProps}
+ * TransformCaseFormatTypeProps type values ="small" | "capital" | "allcaps" | "default"
+ * @returns
+ */
 const Header = ({ title = "", format }: HeaderProps) => {
-  title = transformCase(title, format);
+  const transformObject: TransformCaseTypeProps = {
+    text: title,
+    format: "capital",
+  };
+
+  /**
+   * Transform the title according to the requested format
+   */
+  title = transformCase(transformObject);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
