@@ -21,5 +21,14 @@ export const transformCase = ({ text, format }: TransformCaseTypeProps) => {
   };
 
   const transform = formatters[format];
+  if (!transform) {
+    throw new Error(
+      `Invalid format: "${format}". Allowed formats are: ${Object.keys(
+        formatters
+      ).join(", ")}`
+    );
+  }
   return transform();
 };
+
+//-cleaner approach for switch case
