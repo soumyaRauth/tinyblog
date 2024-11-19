@@ -47,10 +47,11 @@ export const WithStaticPaths = (
   fallback: boolean
 ): GetStaticPaths => {
   return async () => {
-    const paths = await generatePaths(); // Await the async function
+    const paths = await generatePaths();
+
     return {
-      paths,
-      fallback,
+      paths: paths,
+      fallback: fallback,
     };
   };
 };
