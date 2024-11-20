@@ -1,4 +1,8 @@
-import { AuthorProps, PostTypeProps } from "@/Components/lib/types";
+import {
+  AuthorPostsProps,
+  AuthorProps,
+  PostTypeProps,
+} from "@/Components/lib/types";
 import { z } from "zod";
 
 /**
@@ -9,7 +13,7 @@ const API_URL =
   process.env.API_URL ??
   (() => {
     throw new Error("API URL NOT FOUND");
-  })();
+  });
 
 /**
  * Zod schema for validating a author under each post.
@@ -31,10 +35,18 @@ const PostSchema = z.object({
   body: z.string(),
 });
 
+const AuthorPostsSchema = z.object({
+  userId: z.number(),
+  id: z.number(),
+  title: z.string(),
+  body: z.string(),
+});
+
 /**
  * Zod schema for validating an array of posts.
  */
 const PostArraySchema = z.array(PostSchema);
+const AuthorPostArraySchema = z.array(AuthorPostsSchema);
 
 /**
  * Fetches all posts from the API, attaches author data to each post, and validates the data.
@@ -108,7 +120,9 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
  * @returns {Promise<AuthorProps>} - The author data object.
  * @throws {Error} - If the API request for the author fails.
  */
-const fetAuthorById = async (data: PostTypeProps): Promise<AuthorProps> => {
+export const fetAuthorById = async (
+  data: PostTypeProps
+): Promise<AuthorProps> => {
   const authorResponse = await fetch(`${API_URL}/users/${data.userId}`);
   if (!authorResponse.ok) {
     throw new Error("Could not fetch author from API endpoint");
@@ -116,4 +130,24 @@ const fetAuthorById = async (data: PostTypeProps): Promise<AuthorProps> => {
 
   const authorJson = await authorResponse.json();
   return authorJson;
+};
+
+export const fetchPostsByAuthorId = async (
+  id?: string
+): Promise<z.infer<typeof AuthorPostArraySchema>> => {
+  if (!id) {
+    throw new Error("Author Id is missing");
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/users/${id}/posts`);
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw new Error(
+      "Error occured during author post fetching. Check console log for detail"
+    );
+  }
 };

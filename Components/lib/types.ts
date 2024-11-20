@@ -22,3 +22,15 @@ export type PostTypeProps = {
   description?: string;
   body: string;
 };
+
+export type BackButtonProps = {
+  href: string;
+  color?: string;
+};
+
+export type AuthorPostsProps = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};

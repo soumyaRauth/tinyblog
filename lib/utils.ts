@@ -1,6 +1,12 @@
-import { PostTypeProps } from "@/Components/lib/types";
+import { AuthorPostsProps, PostTypeProps } from "@/Components/lib/types";
 import { clsx, type ClassValue } from "clsx";
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  GetStaticPaths,
+  GetStaticProps,
+  GetStaticPropsContext,
+} from "next";
 import { twMerge } from "tailwind-merge";
 
 //-tailwind configuration
@@ -52,6 +58,24 @@ export const WithStaticPaths = (
     return {
       paths: paths,
       fallback: fallback,
+    };
+  };
+};
+
+export const WithServerSideProps = <T>(
+  fetcher: (args?: string) => Promise<T>,
+  propName: string
+): GetServerSideProps => {
+  return async (context?: GetServerSidePropsContext) => {
+    const id = context?.params?.id;
+    if (id && typeof id !== "string") {
+      throw new Error("Invalid id type or Id does not exist");
+    }
+    const data = await fetcher(id);
+    return {
+      props: {
+        [propName]: data,
+      },
     };
   };
 };

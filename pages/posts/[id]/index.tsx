@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Textarea } from "@/Components/ui/textarea";
 import { Button } from "@/Components/ui/button";
 import Header from "@/Components/Header/Header";
+import { BackButton } from "@/Components/BackButton/BackButton";
 
 const PostDetail = ({
   post,
@@ -23,12 +24,7 @@ const PostDetail = ({
     <>
       <Header title="tiny blog" format="capital"></Header>
       <div className="container mx-auto p-6 max-w-3xl">
-        <Link
-          href={"/"}
-          className="text-blue-500 hover:text-blue-700 font-semibold text-sm mb-4 inline-block"
-        >
-          ← Back to Posts
-        </Link>
+        <BackButton href={".."} color="text-purple-500" />
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl font-bold">{post.title}</CardTitle>
