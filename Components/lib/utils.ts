@@ -6,24 +6,24 @@
 
 import { TransformCaseTypeProps } from "./types";
 
-export const transformCase = ({ text, format }: TransformCaseTypeProps) => {
+export const transformCase = ({ text, caseName }: TransformCaseTypeProps) => {
   const formatters = {
     small: () => text.toLocaleLowerCase(),
-    capital: () =>
+    title: () =>
       text
         .split(" ")
         .map(
           (word) => word.toLowerCase().charAt(0).toUpperCase() + word.slice(1)
         )
         .join(" "),
-    allcaps: () => text.toUpperCase(),
+    upper: () => text.toUpperCase(),
     default: () => text,
   };
 
-  const transform = formatters[format];
+  const transform = formatters[caseName];
   if (!transform) {
     throw new Error(
-      `Invalid format: "${format}". Allowed formats are: ${Object.keys(
+      `Invalid format: "${caseName}". Allowed formats are: ${Object.keys(
         formatters
       ).join(", ")}`
     );
@@ -31,4 +31,4 @@ export const transformCase = ({ text, format }: TransformCaseTypeProps) => {
   return transform();
 };
 
-//-cleaner approach for switch case
+

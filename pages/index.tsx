@@ -13,7 +13,7 @@ const HomePage = ({
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <>
-      <Header title="Tiny blog" format="allcaps" />
+      <Header title="Tiny blog" caseName="title" />
       {/* blog */}
       <PostList posts={posts} />
     </>

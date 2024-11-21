@@ -22,7 +22,7 @@ const PostDetail = ({
   }
   return (
     <>
-      <Header title="tiny blog" format="capital"></Header>
+      <Header title="tiny blog" caseName="title"></Header>
       <div className="container mx-auto p-6 max-w-3xl">
         <BackButton href={".."} color="text-purple-500" />
         <Card>

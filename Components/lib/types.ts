@@ -1,12 +1,12 @@
 export type TransformCaseFormatTypeProps =
   | "small"
-  | "capital"
-  | "allcaps"
+  | "title"
+  | "upper"
   | "default";
 
 export type TransformCaseTypeProps = {
   text: string;
-  format: TransformCaseFormatTypeProps;
+  caseName: TransformCaseFormatTypeProps;
 };
 
 export type AuthorProps = {

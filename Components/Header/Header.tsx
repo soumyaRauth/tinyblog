@@ -7,7 +7,7 @@ import { transformCase } from "../lib/utils";
 
 type HeaderProps = {
   title: string;
-  format: TransformCaseFormatTypeProps;
+  caseName: TransformCaseFormatTypeProps;
 };
 /**
  *
@@ -15,10 +15,10 @@ type HeaderProps = {
  * TransformCaseFormatTypeProps type values ="small" | "capital" | "allcaps" | "default"
  * @returns
  */
-const Header = ({ title = "", format }: HeaderProps) => {
+const Header = ({ title = "", caseName }: HeaderProps) => {
   const transformObject: TransformCaseTypeProps = {
     text: title,
-    format: format,
+    caseName: caseName,
   };
 
   /**
