@@ -3,6 +3,7 @@ import { PostList } from "@/Components/PostList/PostList";
 import { fetchPosts } from "@/lib/api";
 import { WithStaticProps } from "@/lib/utils";
 import { InferGetStaticPropsType } from "next";
+import { Suspense } from "react";
 
 /**
  * @returns header and blog posts

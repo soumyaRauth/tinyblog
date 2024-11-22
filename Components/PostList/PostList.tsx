@@ -25,11 +25,11 @@ export const PostList = ({ posts }: PostListProps) => {
             <CardContent>
               <p className="mb-6">{post.body}</p>
               <Link
-                href={`/author/${post.author.id}`}
+                href={`/author/${post?.author.id}`}
                 className="text-purple-500 hover:text-blue-700 font-thin"
               >
-                {post.author.name}
-                {post.author.id}
+                {post?.author.name}
+                {post?.author.id}
               </Link>
 
               <div className="text-right">

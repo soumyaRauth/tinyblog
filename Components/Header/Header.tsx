@@ -8,6 +8,7 @@ import { transformCase } from "../lib/utils";
 type HeaderProps = {
   title: string;
   caseName: TransformCaseFormatTypeProps;
+  recentButton?: boolean;
 };
 /**
  *
@@ -15,7 +16,11 @@ type HeaderProps = {
  * TransformCaseFormatTypeProps type values ="small" | "capital" | "allcaps" | "default"
  * @returns
  */
-const Header = ({ title = "", caseName }: HeaderProps) => {
+const Header = ({
+  title = "",
+  caseName = "small",
+  recentButton = true,
+}: HeaderProps) => {
   const transformObject: TransformCaseTypeProps = {
     text: title,
     caseName: caseName,
@@ -34,9 +39,16 @@ const Header = ({ title = "", caseName }: HeaderProps) => {
           <h1 className="text-xl font-bold">{title}</h1>
         </Link>
         {/* Optional Button or CTA */}
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-          Portfolio
-        </button>
+        {recentButton == true ? (
+          <Link
+            href="/posts/recent"
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 font-bold text-xl shadow"
+          >
+            Recent
+          </Link>
+        ) : (
+          ""
+        )}
       </div>
     </header>
   );

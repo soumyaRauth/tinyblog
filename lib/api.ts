@@ -35,6 +35,8 @@ const PostSchema = z.object({
   body: z.string(),
 });
 
+const PostArraySchema2 = z.array(PostSchema);
+
 const AuthorPostsSchema = z.object({
   userId: z.number(),
   id: z.number(),
@@ -168,4 +170,44 @@ export const fetchPostsByAuthorId = async (
   }
 };
 
-//-get author detail by
+//-get recent posts
+
+//write and understand it 5 times
+
+export const fetchRecentPosts = async (
+  howMany?: string
+): Promise<z.infer<typeof PostArraySchema>> => {
+  if (!howMany) {
+    throw new Error("How many posts should be fetched is not mentioned");
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/posts`);
+    if (!response.ok) {
+      throw new Error("Posts response unsuccessful!");
+    }
+    const postData = await response.json();
+
+    // Fetch author data for each post in parallel and attach it
+    const postWithAuthor: PostTypeProps[] = await Promise.all(
+      postData.map(async (data: PostTypeProps) => {
+        if (!data.userId) {
+          throw new Error("No author found");
+        }
+        const withAuthorData: AuthorProps = await fetAuthorById(
+          data.userId.toString()
+        );
+        return { ...data, author: withAuthorData }; // Combine post and author data
+      })
+    );
+
+    // Validate the combined data using Zod schema
+    const validatedData = PostArraySchema.parse(postWithAuthor);
+    const recentData = validatedData.slice(0, Number(howMany));
+
+    return recentData;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch recent posts! check console log");
+  }
+};
