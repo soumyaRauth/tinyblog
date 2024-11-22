@@ -1,3 +1,7 @@
+**tinyblog v0.1.0** • [**Docs**](modules.md)
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
 
 ## Getting Started
