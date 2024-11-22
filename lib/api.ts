@@ -9,11 +9,11 @@ import { z } from "zod";
  * Retrieves the API URL from environment variables.
  * Throws an error if not found.
  */
-const API_URL =
-  process.env.API_URL ??
-  (() => {
-    throw new Error("API URL NOT FOUND");
-  });
+if (!process.env.API_URL) {
+  throw new Error("API URL is not defined. Check your .env file.");
+}
+
+const API_URL = process.env.API_URL;
 
 /**
  * Zod schema for validating an author under each post.

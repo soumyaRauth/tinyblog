@@ -7,21 +7,10 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 /**
  * RecentPosts Component
  *
- * Displays a list of the most recent blog posts along with the last revalidation timestamp.
- * Includes:
- * - A `Header` with a title.
- * - The revalidation timestamp to indicate when the data was last updated.
- * - A `PostList` component to render the recent posts.
- *
- * @param {InferGetStaticPropsType<typeof getStaticProps>} props - Props returned from `getStaticProps`.
- * @param {object} props.recentPosts - An object containing recent posts data and revalidation info.
- * @param {Array} props.recentPosts.data - An array of recent posts to render.
- * @param {string} props.recentPosts.revalidateAt - A timestamp indicating the last revalidation.
- * @returns {JSX.Element} The rendered RecentPosts page.
- *
- * @example
- * const recentPosts = { data: [{ id: 1, title: "Hello World" }], revalidateAt: "Friday, November 22, 2024, 04:35 PM" };
- * <RecentPosts recentPosts={recentPosts} />
+ * @param {object} props - Component properties.
+ * @param {object} props.recentPosts - The recent posts object.
+ * @param {Array} props.recentPosts.data - An array of recent posts.
+ * @param {string} props.recentPosts.revalidateAt - Timestamp of the last revalidation.
  */
 const RecentPosts = ({
   recentPosts,

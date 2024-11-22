@@ -1,10 +1,11 @@
 {
   "entryPoints": [
-    "Components/**/*.ts",
+    "Components/*.ts",
+    "Components/**/*.tsx",
     "pages/**/*.tsx",
     "Components/lib/**/*.ts"
   ],
-  "plugin": ["typedoc-plugin-markdown"],
+  //   "plugin": ["typedoc-plugin-markdown"],
   "out": "docs",
   "tsconfig": "./tsconfig.json",
   "exclude": ["**/*.test.ts", "**/*.spec.ts", "node_modules"],
