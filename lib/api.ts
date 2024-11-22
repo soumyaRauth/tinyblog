@@ -16,13 +16,14 @@ const API_URL =
   });
 
 /**
- * Zod schema for validating a author under each post.
+ * Zod schema for validating an author under each post.
  */
 const AuthorSchema = z.object({
   id: z.number(),
   name: z.string(),
   email: z.string().email(),
 });
+
 /**
  * Zod schema for validating a single post.
  */
@@ -35,8 +36,14 @@ const PostSchema = z.object({
   body: z.string(),
 });
 
-const PostArraySchema2 = z.array(PostSchema);
+/**
+ * Zod schema for validating an array of posts.
+ */
+const PostArraySchema = z.array(PostSchema);
 
+/**
+ * Zod schema for validating a minimal author post object.
+ */
 const AuthorPostsSchema = z.object({
   userId: z.number(),
   id: z.number(),
@@ -45,9 +52,8 @@ const AuthorPostsSchema = z.object({
 });
 
 /**
- * Zod schema for validating an array of posts.
+ * Zod schema for validating posts and their author as a combined object.
  */
-const PostArraySchema = z.array(PostSchema);
 const AuthorPostArraySchema = z.object({
   posts: z.array(AuthorPostsSchema),
   author: AuthorSchema,
@@ -62,17 +68,14 @@ const AuthorPostArraySchema = z.object({
 export const fetchPosts = async (): Promise<
   z.infer<typeof PostArraySchema>
 > => {
-  // Fetch all posts from the API
   const response = await fetch(`${API_URL}/posts`);
 
   if (!response.ok) {
     throw new Error("Could not fetch posts from API endpoint");
   }
 
-  // Parse response as an array of PostTypeProps
   const postData: PostTypeProps[] = await response.json();
 
-  // Fetch author data for each post in parallel and attach it
   const postWithAuthor: PostTypeProps[] = await Promise.all(
     postData.map(async (data: PostTypeProps) => {
       if (!data.userId) {
@@ -81,11 +84,10 @@ export const fetchPosts = async (): Promise<
       const withAuthorData: AuthorProps = await fetAuthorById(
         data.userId.toString()
       );
-      return { ...data, author: withAuthorData }; // Combine post and author data
+      return { ...data, author: withAuthorData };
     })
   );
 
-  // Validate the combined data using Zod schema
   const validatedData = PostArraySchema.parse(postWithAuthor);
 
   return validatedData;
@@ -104,7 +106,6 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
   }
 
   try {
-    // Fetch post data by ID
     const postResponse = await fetch(`${API_URL}/posts/${id}`);
 
     if (!postResponse.ok) {
@@ -113,7 +114,6 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
 
     const data: PostTypeProps = await postResponse.json();
 
-    // Fetch and attach author data to the post
     const authorData: AuthorProps = await fetAuthorById(data.userId.toString());
 
     data["author"] = authorData;
@@ -127,8 +127,8 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
 /**
  * Fetches the author data for a given post.
  *
- * @param {PostTypeProps} data - The post data, which includes the userId.
- * @returns {Promise<AuthorProps>} - The author data object.
+ * @param {string} userId - The ID of the user to fetch.
+ * @returns {Promise<z.infer<typeof AuthorSchema>>} - The author data object.
  * @throws {Error} - If the API request for the author fails.
  */
 export const fetAuthorById = async (
@@ -144,6 +144,13 @@ export const fetAuthorById = async (
   return validateAuthorData;
 };
 
+/**
+ * Fetches posts by an author ID, along with the author's data.
+ *
+ * @param {string} id - The author ID.
+ * @returns {Promise<z.infer<typeof AuthorPostArraySchema>>} - An object containing posts and author data.
+ * @throws {Error} - If the API request fails or data is invalid.
+ */
 export const fetchPostsByAuthorId = async (
   id?: string
 ): Promise<z.infer<typeof AuthorPostArraySchema>> => {
@@ -152,7 +159,6 @@ export const fetchPostsByAuthorId = async (
   }
 
   try {
-    // Fetch and attach author data to the post
     const authorData: AuthorProps = await fetAuthorById(id);
 
     const posts = await fetch(`${API_URL}/users/${id}/posts`);
@@ -165,15 +171,18 @@ export const fetchPostsByAuthorId = async (
   } catch (error) {
     console.log(error);
     throw new Error(
-      "Error occured during author post fetching. Check console log for detail"
+      "Error occurred during author post fetching. Check console log for detail"
     );
   }
 };
 
-//-get recent posts
-
-//write and understand it 5 times
-
+/**
+ * Fetches a specified number of recent posts, attaches author data, and validates the result.
+ *
+ * @param {string} howMany - The number of posts to fetch.
+ * @returns {Promise<z.infer<typeof PostArraySchema>>} - An array of recent posts with validated data.
+ * @throws {Error} - If the API request fails or data is invalid.
+ */
 export const fetchRecentPosts = async (
   howMany?: string
 ): Promise<z.infer<typeof PostArraySchema>> => {
@@ -188,7 +197,6 @@ export const fetchRecentPosts = async (
     }
     const postData = await response.json();
 
-    // Fetch author data for each post in parallel and attach it
     const postWithAuthor: PostTypeProps[] = await Promise.all(
       postData.map(async (data: PostTypeProps) => {
         if (!data.userId) {
@@ -197,17 +205,16 @@ export const fetchRecentPosts = async (
         const withAuthorData: AuthorProps = await fetAuthorById(
           data.userId.toString()
         );
-        return { ...data, author: withAuthorData }; // Combine post and author data
+        return { ...data, author: withAuthorData };
       })
     );
 
-    // Validate the combined data using Zod schema
     const validatedData = PostArraySchema.parse(postWithAuthor);
     const recentData = validatedData.slice(0, Number(howMany));
 
     return recentData;
   } catch (error) {
     console.log(error);
-    throw new Error("Failed to fetch recent posts! check console log");
+    throw new Error("Failed to fetch recent posts! Check console log");
   }
 };

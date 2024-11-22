@@ -17,6 +17,16 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "pages", // Include your Next.js pages.
+    "Components", // Include your components folder.
+    "Components/lib", // Include utility and API files.
+    "lib", // If you have a separate `lib` folder, include it.
+    "utils", // If you have a `utils` folder, include it.
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "exclude": ["node_modules"]
 }

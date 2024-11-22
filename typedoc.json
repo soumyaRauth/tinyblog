@@ -1,0 +1,14 @@
+{
+  "entryPoints": [
+    "Components/**/*.ts",
+    "pages/**/*.tsx",
+    "Components/lib/**/*.ts"
+  ],
+  "plugin": ["typedoc-plugin-markdown"],
+  "out": "docs",
+  "tsconfig": "./tsconfig.json",
+  "exclude": ["**/*.test.ts", "**/*.spec.ts", "node_modules"],
+  "excludeExternals": true,
+  "includeVersion": true,
+  "readme": "README.md"
+}
