@@ -1,4 +1,8 @@
-import { AuthorPostsProps, PostTypeProps } from "@/Components/lib/types";
+import {
+  AuthorPostsProps,
+  DateFormatProps,
+  PostTypeProps,
+} from "@/Components/lib/types";
 import { clsx, type ClassValue } from "clsx";
 import {
   GetServerSideProps,
@@ -24,14 +28,19 @@ export const WithStaticProps = <T>(
   return async (context?: GetStaticPropsContext) => {
     try {
       const id = context?.params?.id;
+      const revalidateTime = currentDate("default");
 
       if (id && typeof id !== "string") {
         throw new Error("Invalid ID type. Expected string.");
       }
       const data = await fetcher(id);
+      const revalidatedInfoWithData = {
+        data: data,
+        revalidateAt: revalidateTime,
+      };
       return {
         props: {
-          [propName]: data,
+          [propName]: revalidatedInfoWithData,
         },
         revalidate: revalidateInterval,
       };
@@ -78,4 +87,23 @@ export const WithServerSideProps = <T>(
       },
     };
   };
+};
+
+export const currentDate = (format: DateFormatProps) => {
+  const formatDate = {
+    default: () => {
+      const currentTime = new Date();
+      const humanReadableDate = currentTime.toLocaleString("en-US", {
+        weekday: "long", // e.g., "Monday"
+        year: "numeric", // e.g., "2024"
+        month: "long", // e.g., "November"
+        day: "numeric", // e.g., "22"
+        hour: "2-digit", // e.g., "04 PM"
+        minute: "2-digit",
+      });
+      return humanReadableDate;
+    },
+  };
+  const transformedDate = formatDate[format];
+  return transformedDate();
 };

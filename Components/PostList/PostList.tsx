@@ -29,7 +29,6 @@ export const PostList = ({ posts }: PostListProps) => {
                 className="text-purple-500 hover:text-blue-700 font-thin"
               >
                 {post?.author.name}
-                {post?.author.id}
               </Link>
 
               <div className="text-right">

@@ -4,6 +4,8 @@ export type TransformCaseFormatTypeProps =
   | "upper"
   | "default";
 
+export type DateFormatProps = "default";
+
 export type TransformCaseTypeProps = {
   text: string;
   caseName: TransformCaseFormatTypeProps;

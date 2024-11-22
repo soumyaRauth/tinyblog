@@ -16,7 +16,7 @@ const HomePage = ({
     <>
       <Header title="Tiny blog" caseName="title" />
       {/* blog */}
-      <PostList posts={posts} />
+      <PostList posts={posts.data} />
     </>
   );
 };

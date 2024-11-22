@@ -7,13 +7,16 @@ import { GetStaticProps, InferGetStaticPropsType } from "next";
 const RecentPosts = ({
   recentPosts,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  console.log("Printing all recent posts");
-  console.log(recentPosts);
-
   return (
     <>
       <Header title="tiny blog" recentButton={false} caseName="title" />
-      <PostList posts={recentPosts} />
+      <div className="flex justify-center items-center mt-6">
+        <div className="text-sm text-gray-500">
+          <span className="font-semibold text-gray-700">Last Updated:</span>{" "}
+          {recentPosts.revalidateAt}
+        </div>
+      </div>
+      <PostList posts={recentPosts.data} />
     </>
   );
 };

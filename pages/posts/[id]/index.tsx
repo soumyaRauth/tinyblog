@@ -27,23 +27,25 @@ const PostDetail = ({
         <BackButton href={".."} color="text-purple-500" />
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">{post.title}</CardTitle>
+            <CardTitle className="text-2xl font-bold">
+              {post.data.title}
+            </CardTitle>
           </CardHeader>
 
           <div className="border-t border-gray-300 my-4"></div>
 
           <CardContent>
-            <p className="text-gray-700 text-lg">{post.body}</p>
+            <p className="text-gray-700 text-lg">{post.data.body}</p>
           </CardContent>
 
           <div className="border-t border-gray-300 my-4" />
 
           <CardFooter className="flex justify-end text-sm text-gray-500">
             <Link
-              href={`/author/${post.author.id}`}
+              href={`/author/${post.data.author.id}`}
               className="text-muted-foreground hover:text-gray-600 font-semibold"
             >
-              Written by: {post.author.name}
+              Written by: {post.data.author.name}
             </Link>
           </CardFooter>
         </Card>
