@@ -40,7 +40,7 @@ const PostDetail = ({
 
           <CardFooter className="flex justify-end text-sm text-gray-500">
             <Link
-              href={`/`}
+              href={`/author/${post.author.id}`}
               className="text-muted-foreground hover:text-gray-600 font-semibold"
             >
               Written by: {post.author.name}

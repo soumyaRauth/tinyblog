@@ -46,7 +46,10 @@ const AuthorPostsSchema = z.object({
  * Zod schema for validating an array of posts.
  */
 const PostArraySchema = z.array(PostSchema);
-const AuthorPostArraySchema = z.array(AuthorPostsSchema);
+const AuthorPostArraySchema = z.object({
+  posts: z.array(AuthorPostsSchema),
+  author: AuthorSchema,
+});
 
 /**
  * Fetches all posts from the API, attaches author data to each post, and validates the data.
@@ -70,7 +73,12 @@ export const fetchPosts = async (): Promise<
   // Fetch author data for each post in parallel and attach it
   const postWithAuthor: PostTypeProps[] = await Promise.all(
     postData.map(async (data: PostTypeProps) => {
-      const withAuthorData: AuthorProps = await fetAuthorById(data);
+      if (!data.userId) {
+        throw new Error("No author found");
+      }
+      const withAuthorData: AuthorProps = await fetAuthorById(
+        data.userId.toString()
+      );
       return { ...data, author: withAuthorData }; // Combine post and author data
     })
   );
@@ -104,7 +112,8 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
     const data: PostTypeProps = await postResponse.json();
 
     // Fetch and attach author data to the post
-    const authorData = await fetAuthorById(data);
+    const authorData: AuthorProps = await fetAuthorById(data.userId.toString());
+
     data["author"] = authorData;
 
     return data;
@@ -121,15 +130,16 @@ export const fetchPostsById = async (id?: string): Promise<PostTypeProps> => {
  * @throws {Error} - If the API request for the author fails.
  */
 export const fetAuthorById = async (
-  data: PostTypeProps
-): Promise<AuthorProps> => {
-  const authorResponse = await fetch(`${API_URL}/users/${data.userId}`);
+  userId: string
+): Promise<z.infer<typeof AuthorSchema>> => {
+  const authorResponse = await fetch(`${API_URL}/users/${userId}`);
   if (!authorResponse.ok) {
     throw new Error("Could not fetch author from API endpoint");
   }
 
-  const authorJson = await authorResponse.json();
-  return authorJson;
+  const authorJson: AuthorProps = await authorResponse.json();
+  const validateAuthorData = AuthorSchema.parse(authorJson);
+  return validateAuthorData;
 };
 
 export const fetchPostsByAuthorId = async (
@@ -140,10 +150,16 @@ export const fetchPostsByAuthorId = async (
   }
 
   try {
-    const response = await fetch(`${API_URL}/users/${id}/posts`);
-    const data = await response.json();
+    // Fetch and attach author data to the post
+    const authorData: AuthorProps = await fetAuthorById(id);
 
-    return data;
+    const posts = await fetch(`${API_URL}/users/${id}/posts`);
+    const data = await posts.json();
+
+    return {
+      posts: data,
+      author: authorData,
+    };
   } catch (error) {
     console.log(error);
     throw new Error(
@@ -151,3 +167,5 @@ export const fetchPostsByAuthorId = async (
     );
   }
 };
+
+//-get author detail by

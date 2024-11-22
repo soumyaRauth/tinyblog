@@ -1,4 +1,5 @@
 import { BackButton } from "@/Components/BackButton/BackButton";
+import { AuthorProps, PostTypeProps } from "@/Components/lib/types";
 import { fetchPostsByAuthorId } from "@/lib/api";
 import { WithServerSideProps } from "@/lib/utils";
 import {
@@ -38,14 +39,15 @@ export default function AuthorDashboard({
         </div>
         {/* Author Name */}
         <div className="ml-4">
-          <h2 className="text-2xl font-bold">John Doe</h2>
+          <h2 className="text-2xl font-bold">{authorPosts.author.name}</h2>
           <p className="text-gray-600">Author</p>
-          <p className="text-gray-600">Author ID {authorPosts[5].id}</p>
         </div>
       </div>
 
       {/* Page Title */}
-      <h1 className="text-3xl font-bold mb-6">Author Dashboard</h1>
+      <h1 className="text-3xl font-bold mb-6">
+        {authorPosts.author.name}'s Dashboard
+      </h1>
 
       {/* Add New Post Section */}
       <div className="mb-6 flex justify-between items-center">
@@ -57,41 +59,25 @@ export default function AuthorDashboard({
 
       {/* Posts List */}
       <div className="grid grid-cols-1 gap-6">
-        {/* Post Card 1 */}
-        <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200">
-          <h3 className="text-xl font-semibold">Post Title 1</h3>
-          <p className="text-gray-600">
-            This is a brief description of the post.
-          </p>
+        {authorPosts.posts.map((post: PostTypeProps) => (
+          <>
+            {/* Post Card 1 */}
+            <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200">
+              <h3 className="text-xl font-semibold">{post.title}</h3>
+              <p className="text-gray-600">{post.body}</p>
 
-          {/* Actions */}
-          <div className="mt-4 flex space-x-4">
-            <button className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-              <PencilSquareIcon className="w-5 h-5" />
-            </button>
-            <button className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Post Card 2 */}
-        <div className="p-4 bg-white shadow-md rounded-lg border border-gray-200">
-          <h3 className="text-xl font-semibold">Post Title 2</h3>
-          <p className="text-gray-600">
-            This is another brief description of a post.
-          </p>
-
-          {/* Actions */}
-          <div className="mt-4 flex space-x-4">
-            <button className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
-              <PencilSquareIcon className="w-5 h-5" />
-            </button>
-            <button className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
-              <TrashIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
+              {/* Actions */}
+              <div className="mt-4 flex space-x-4">
+                <button className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                  <PencilSquareIcon className="w-5 h-5" />
+                </button>
+                <button className="p-2 bg-red-500 text-white rounded hover:bg-red-600">
+                  <TrashIcon className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </>
+        ))}
       </div>
     </div>
   );

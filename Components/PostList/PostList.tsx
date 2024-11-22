@@ -24,7 +24,14 @@ export const PostList = ({ posts }: PostListProps) => {
             </CardHeader>
             <CardContent>
               <p className="mb-6">{post.body}</p>
-              <p className="mb-6">{post.author.name}</p>
+              <Link
+                href={`/author/${post.author.id}`}
+                className="text-purple-500 hover:text-blue-700 font-thin"
+              >
+                {post.author.name}
+                {post.author.id}
+              </Link>
+
               <div className="text-right">
                 <Link
                   href={`/posts/${post.id}`}
