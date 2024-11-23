@@ -44,7 +44,7 @@ export const PostList = ({ posts }: PostListProps) => {
     <div className="container mx-auto p-6 space-y-6">
       {/* Responsive grid layout for posts */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.map((post) => (
+        {posts?.map((post) => (
           <Card key={post.id} className="hover:shadow-lg">
             {/* Card Header with title and description */}
             <CardHeader>

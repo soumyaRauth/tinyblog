@@ -5,11 +5,11 @@ import { z } from "zod";
  * Retrieves the API URL from environment variables.
  * Throws an error if not found.
  */
-if (!process.env.API_URL) {
+if (!process.env.NEXT_PUBLIC_API_URL) {
   throw new Error("API URL is not defined. Check your test .env file.");
 }
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /**
  * Zod schema for validating an author under each post.
@@ -86,6 +86,9 @@ export const fetchPosts = async (): Promise<
 
   const validatedData = PostArraySchema.parse(postWithAuthor);
 
+  console.log("validated data from posts");
+  console.log(validatedData);
+
   return validatedData;
 };
 
@@ -156,7 +159,6 @@ export const fetchPostsByAuthorId = async (
 
   try {
     const authorData: AuthorProps = await fetAuthorById(id);
-
     const posts = await fetch(`${API_URL}/users/${id}/posts`);
     const data = await posts.json();
 
@@ -213,4 +215,39 @@ export const fetchRecentPosts = async (
     console.log(error);
     throw new Error("Failed to fetch recent posts! Check console log");
   }
+};
+
+//-Function to fetch dynamic post search filter
+//-input type, output type, exception cases, error handling
+
+export const fetchSearchQueryData = async (query: string) => {
+  const response = await fetch(`${API_URL}/posts?title_like=${query}`);
+
+  if (!response.ok) {
+    throw new Error("Could not fetch posts from API endpoint");
+  }
+
+  const postData: PostTypeProps[] = await response.json();
+
+  const postWithAuthor: PostTypeProps[] = await Promise.all(
+    postData.map(async (data: PostTypeProps) => {
+      if (!data.userId) {
+        throw new Error("No author found");
+      }
+      const withAuthorData: AuthorProps = await fetAuthorById(
+        data.userId.toString()
+      );
+      return { ...data, author: withAuthorData };
+    })
+  );
+
+  const validatedData = PostArraySchema.parse(postWithAuthor);
+
+  console.log("validatedData data");
+  console.log(validatedData);
+
+  return {
+    data: validatedData,
+    revalidateAt: 60,
+  };
 };
