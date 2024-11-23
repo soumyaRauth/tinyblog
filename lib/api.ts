@@ -1,8 +1,4 @@
-import {
-  AuthorPostsProps,
-  AuthorProps,
-  PostTypeProps,
-} from "@/Components/lib/types";
+import { AuthorProps, PostTypeProps } from "@/Components/lib/types";
 import { z } from "zod";
 
 /**
@@ -10,7 +6,7 @@ import { z } from "zod";
  * Throws an error if not found.
  */
 if (!process.env.API_URL) {
-  throw new Error("API URL is not defined. Check your .env file.");
+  throw new Error("API URL is not defined. Check your test .env file.");
 }
 
 const API_URL = process.env.API_URL;
