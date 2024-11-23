@@ -30,9 +30,6 @@ const HomePage = ({
   const [query, setQuery] = useState<string>("");
   const [loading, setIsLoading] = useState<boolean>(false);
 
-  console.log("and posts");
-  console.log(posts.data);
-
   useEffect(() => {
     if (!query) {
       setSearchArray(posts); // Reset to initial posts if query is empty
@@ -43,7 +40,6 @@ const HomePage = ({
       setIsLoading(true);
       try {
         const dta = await fetchSearchQueryData(query); // Call and resolve the async function
-
         setSearchArray(dta); // Update the state with the resolved data
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -52,8 +48,12 @@ const HomePage = ({
       }
     };
 
-    fetchData(); // Call the async function
+    // Add a debounce to minimize unnecessary requests during typing
+    const debounceFetch = setTimeout(fetchData, 300);
+
+    return () => clearTimeout(debounceFetch); // Cleanup the debounce on unmount or query change
   }, [query, posts]);
+
   return (
     <>
       <Header title="Tiny blog" caseName="title" />
@@ -70,11 +70,15 @@ const HomePage = ({
         />
       </div>
       {/* Blog Section */}
-      {loading ? (
-        <PostList posts={posts.data} /> // Show initial posts while loading
-      ) : (
-        <PostList posts={query ? searchArray.data : posts.data} /> // Show search results or initial posts
-      )}
+      <div className="relative">
+        {/* Optional loading indicator */}
+        {loading && (
+          <div className="absolute inset-0 bg-white/50">
+            {/* <span className="loader text-gray-700">Loading...</span>{" "} */}
+          </div>
+        )}
+        <PostList posts={query ? searchArray.data : posts.data} />
+      </div>
     </>
   );
 };
