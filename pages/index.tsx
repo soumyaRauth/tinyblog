@@ -33,7 +33,7 @@ const HomePage = ({
   const debouncedQuery = useDebounce(query, 30);
 
   //-react query
-  const { data, isLoading, error } = useQuery({
+  const getUserQuery = useQuery({
     queryKey: ["searchedPosts", debouncedQuery],
     queryFn: () => fetchSearchQueryData(debouncedQuery),
     enabled: debouncedQuery ? true : false,
@@ -57,14 +57,16 @@ const HomePage = ({
       {/* Blog Section */}
       <div className="relative">
         {/* Optional loading indicator */}
-        {isLoading && (
+
+        {getUserQuery.isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             <p>Loading...</p>
           </div>
         )}
-
-        {error instanceof Error && <p>Error: {error.message}</p>}
-        <PostList posts={query ? data?.data : posts.data} />
+        {getUserQuery.error instanceof Error && (
+          <p>Error: {getUserQuery.error.message}</p>
+        )}
+        <PostList posts={query ? getUserQuery.data?.data : posts.data} />
       </div>
     </>
   );

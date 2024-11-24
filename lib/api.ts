@@ -245,3 +245,20 @@ export const fetchSearchQueryData = async <T>(query: T) => {
     revalidateAt: 60,
   };
 };
+
+//-Create new post api call
+
+export const createNewPost = async <T>(postObject: T): Promise<T> => {
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(postObject), // Send the generic object
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create post");
+  }
+
+  return response.json(); // Return the response as the same type
+};
+
