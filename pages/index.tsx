@@ -1,10 +1,12 @@
 import Header from "@/Components/Header/Header";
-import { PostTypeProps } from "@/Components/lib/types";
 import { PostList } from "@/Components/PostList/PostList";
 import { fetchPosts, fetchSearchQueryData } from "@/lib/api";
 import { WithStaticProps } from "@/lib/utils";
 import { InferGetStaticPropsType } from "next";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useDebounce } from "@/lib/hooks/useDebounce";
+
 /**
  * HomePage Component
  *
@@ -23,36 +25,19 @@ import { useState, useEffect } from "react";
  * const posts = [{ id: 1, title: "First Post", body: "Hello World!" }];
  * <HomePage posts={{ data: posts, revalidateAt: "Timestamp" }} />
  */
+
 const HomePage = ({
   posts,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [searchArray, setSearchArray] = useState(posts);
   const [query, setQuery] = useState<string>("");
-  const [loading, setIsLoading] = useState<boolean>(false);
+  const debouncedQuery = useDebounce(query, 30);
 
-  useEffect(() => {
-    if (!query) {
-      setSearchArray(posts); // Reset to initial posts if query is empty
-      return;
-    }
-
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const dta = await fetchSearchQueryData(query); // Call and resolve the async function
-        setSearchArray(dta); // Update the state with the resolved data
-      } catch (error) {
-        console.error("Error fetching search results:", error);
-      } finally {
-        setIsLoading(false); // Ensure loading state is cleared
-      }
-    };
-
-    // Add a debounce to minimize unnecessary requests during typing
-    const debounceFetch = setTimeout(fetchData, 300);
-
-    return () => clearTimeout(debounceFetch); // Cleanup the debounce on unmount or query change
-  }, [query, posts]);
+  //-react query
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["searchedPosts", debouncedQuery],
+    queryFn: () => fetchSearchQueryData(debouncedQuery),
+    enabled: debouncedQuery ? true : false,
+  });
 
   return (
     <>
@@ -72,12 +57,14 @@ const HomePage = ({
       {/* Blog Section */}
       <div className="relative">
         {/* Optional loading indicator */}
-        {loading && (
-          <div className="absolute inset-0 bg-white/50">
-            {/* <span className="loader text-gray-700">Loading...</span>{" "} */}
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p>Loading...</p>
           </div>
         )}
-        <PostList posts={query ? searchArray.data : posts.data} />
+
+        {error instanceof Error && <p>Error: {error.message}</p>}
+        <PostList posts={query ? data?.data : posts.data} />
       </div>
     </>
   );
@@ -93,8 +80,5 @@ export default HomePage;
  * @type {GetStaticProps}
  * @returns {Promise<{ props: { posts: { data: Array<object>, revalidateAt: string } } }>} - Fetched posts and revalidation info.
  *
- * @example
- * const { props } = await getStaticProps();
- * console.log(props.posts.data); // Array of blog posts
  */
 export const getStaticProps = WithStaticProps(fetchPosts, "posts", 60);

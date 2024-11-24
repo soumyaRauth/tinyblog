@@ -86,9 +86,6 @@ export const fetchPosts = async (): Promise<
 
   const validatedData = PostArraySchema.parse(postWithAuthor);
 
-  console.log("validated data from posts");
-  console.log(validatedData);
-
   return validatedData;
 };
 
@@ -220,7 +217,7 @@ export const fetchRecentPosts = async (
 //-Function to fetch dynamic post search filter
 //-input type, output type, exception cases, error handling
 
-export const fetchSearchQueryData = async (query: string) => {
+export const fetchSearchQueryData = async <T>(query: T) => {
   const response = await fetch(`${API_URL}/posts?title_like=${query}`);
 
   if (!response.ok) {
@@ -242,9 +239,6 @@ export const fetchSearchQueryData = async (query: string) => {
   );
 
   const validatedData = PostArraySchema.parse(postWithAuthor);
-
-  console.log("validatedData data");
-  console.log(validatedData);
 
   return {
     data: validatedData,
