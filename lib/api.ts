@@ -218,6 +218,8 @@ export const fetchRecentPosts = async (
 //-input type, output type, exception cases, error handling
 
 export const fetchSearchQueryData = async <T>(query: T) => {
+  console.log("Printing query from data fetch");
+  console.log(query);
   const response = await fetch(`${API_URL}/posts?title_like=${query}`);
 
   if (!response.ok) {
@@ -261,4 +263,3 @@ export const createNewPost = async <T>(postObject: T): Promise<T> => {
 
   return response.json(); // Return the response as the same type
 };
-

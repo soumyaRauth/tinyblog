@@ -4,8 +4,8 @@ import { fetchPosts, fetchSearchQueryData } from "@/lib/api";
 import { WithStaticProps } from "@/lib/utils";
 import { InferGetStaticPropsType } from "next";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * HomePage Component
@@ -32,11 +32,11 @@ const HomePage = ({
   const [query, setQuery] = useState<string>("");
   const debouncedQuery = useDebounce(query, 30);
 
-  //-react query
-  const getUserQuery = useQuery({
-    queryKey: ["searchedPosts", debouncedQuery],
+  //-react query usecase implementaion
+  const getSearchedData = useQuery({
+    queryKey: ["searchPosts", debouncedQuery],
     queryFn: () => fetchSearchQueryData(debouncedQuery),
-    enabled: debouncedQuery ? true : false,
+    enabled: !!debouncedQuery,
   });
 
   return (
@@ -58,15 +58,17 @@ const HomePage = ({
       <div className="relative">
         {/* Optional loading indicator */}
 
-        {getUserQuery.isLoading && (
+        {getSearchedData.isLoading && (
           <div className="absolute inset-0 flex items-center justify-center">
             <p>Loading...</p>
           </div>
         )}
-        {getUserQuery.error instanceof Error && (
-          <p>Error: {getUserQuery.error.message}</p>
+        {getSearchedData.error instanceof Error && (
+          <p>Error: {getSearchedData.error.message}</p>
         )}
-        <PostList posts={query ? getUserQuery.data?.data : posts.data} />
+        <PostList
+          posts={debouncedQuery ? getSearchedData.data?.data : posts.data}
+        />
       </div>
     </>
   );

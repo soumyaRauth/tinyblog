@@ -52,9 +52,15 @@ export default function AuthorDashboard({
       {/* Add New Post Section */}
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Your Posts</h2>
-        <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <Link
+          href={"/posts/create"}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
           Add New Post
-        </button>
+        </Link>
+        {/* <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Add New Post
+        </button> */}
       </div>
 
       {/* Posts List */}

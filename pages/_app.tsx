@@ -5,12 +5,11 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [queryShit] = useState(() => new QueryClient());
-
+  const [queryClientConfiguration] = useState(() => new QueryClient({}));
   return (
-    <QueryClientProvider client={queryShit}>
+    <QueryClientProvider client={queryClientConfiguration}>
       <Component {...pageProps} />
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools initialIsOpen={false}></ReactQueryDevtools>
     </QueryClientProvider>
   );
 }
