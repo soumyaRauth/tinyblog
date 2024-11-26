@@ -263,3 +263,35 @@ export const createNewPost = async <T>(postObject: T): Promise<T> => {
 
   return response.json(); // Return the response as the same type
 };
+
+//-Implementing pagination
+export const fetchPostsPaginated = async (
+  page:number = 0,
+  limit:number = 5
+): Promise<z.infer<typeof PostArraySchema>> => {
+  const response = await fetch(
+    `${API_URL}/posts?_page=${page}&_limit=${limit}`
+  );
+
+  if (!response.ok) {
+    throw new Error("Could not fetch posts from API endpoint");
+  }
+
+  const postData: PostTypeProps[] = await response.json();
+
+  const postWithAuthor: PostTypeProps[] = await Promise.all(
+    postData.map(async (data: PostTypeProps) => {
+      if (!data.userId) {
+        throw new Error("No author found");
+      }
+      const withAuthorData: AuthorProps = await fetAuthorById(
+        data.userId.toString()
+      );
+      return { ...data, author: withAuthorData };
+    })
+  );
+
+  const validatedData = PostArraySchema.parse(postWithAuthor);
+
+  return validatedData;
+};

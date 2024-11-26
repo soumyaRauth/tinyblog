@@ -1,13 +1,18 @@
 import Header from "@/Components/Header/Header";
 import { PostList } from "@/Components/PostList/PostList";
-import { fetchPosts, fetchSearchQueryData } from "@/lib/api";
+import {
+  fetchPosts,
+  fetchPostsPaginated,
+  fetchSearchQueryData,
+} from "@/lib/api";
 import { WithStaticProps } from "@/lib/utils";
-import { InferGetStaticPropsType } from "next";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { useState } from "react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useIsFetching } from "@tanstack/react-query";
 import { useArrayLength } from "@/lib/hooks/useArrayLength";
+import { PostTypeProps } from "@/Components/lib/types";
 /**
  * HomePage Component
  *
@@ -31,28 +36,51 @@ const HomePage = ({
   posts,
 }: InferGetStaticPropsType<typeof getStaticProps>) => {
   const isFetching = useIsFetching();
-  const [query, setQuery] = useState<string>("");
-  const debouncedQuery = useDebounce(query, 30);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  //   const debouncedQuery = useDebounce(query, 30);
   const pagesSize = useArrayLength(fetchPosts);
 
   //-react query usecase implementaion
   const { data, error, isLoading, isPlaceholderData } = useQuery({
-    queryKey: ["searchPosts", debouncedQuery],
-    queryFn: () => fetchSearchQueryData(debouncedQuery),
-    enabled: !!debouncedQuery,
+    queryKey: ["searchPosts", pageNumber],
+    queryFn: () => fetchPostsPaginated(pageNumber, 100),
+    enabled: !!pageNumber,
     placeholderData: keepPreviousData,
   });
 
   return (
-    <>
-      <Header title="Tiny blog" caseName="title" />
-      {`Total Posts: ${pagesSize ? pagesSize : "Calculating ..."}`}
-      {/* Blog Section */}
-      <div className="relative">
-        {error instanceof Error && <p>Error: {error.message}</p>}
-        <PostList posts={debouncedQuery ? data?.data : posts.data} />
-      </div>
-    </>
+    <div>
+      {!!isFetching ? (
+        <div>LOADINGGG...</div>
+      ) : error ? (
+        <div>Error: {error.message}</div>
+      ) : (
+        <div>
+          <PostList posts={pageNumber ? data : posts.data} />
+          <span>Current Page: {pageNumber}</span>
+          <button
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 font-bold text-xl shadow"
+            onClick={() => setPageNumber((old) => Math.max(old - 1, 0))}
+            disabled={pageNumber === 0}
+            // disabled={page === 0}
+          >
+            Previous Page
+          </button>
+          <button
+            onClick={() => {
+              if (!isPlaceholderData) {
+                setPageNumber((old) => old + 1);
+              }
+            }}
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 font-bold text-xl shadow"
+            // Disable the Next Page button until we know a next page is available
+            // disabled={isPlaceholderData || !data?.hasMore}
+          >
+            Next Page
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -67,4 +95,14 @@ export default HomePage;
  * @returns {Promise<{ props: { posts: { data: Array<object>, revalidateAt: string } } }>} - Fetched posts and revalidation info.
  *
  */
-export const getStaticProps = WithStaticProps(fetchPosts, "posts", 60);
+export const getStaticProps: GetStaticProps = async () => {
+  const response = await fetchPostsPaginated(1, 10);
+
+  return {
+    props: {
+      posts: {
+        data: response,
+      },
+    },
+  };
+};
