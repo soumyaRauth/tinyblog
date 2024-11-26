@@ -5,7 +5,16 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [queryClientConfiguration] = useState(() => new QueryClient({}));
+  const [queryClientConfiguration] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
   return (
     <QueryClientProvider client={queryClientConfiguration}>
       <Component {...pageProps} />

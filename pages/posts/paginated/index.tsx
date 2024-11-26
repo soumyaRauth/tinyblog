@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useIsFetching } from "@tanstack/react-query";
+import { useArrayLength } from "@/lib/hooks/useArrayLength";
 /**
  * HomePage Component
  *
@@ -32,6 +33,7 @@ const HomePage = ({
   const isFetching = useIsFetching();
   const [query, setQuery] = useState<string>("");
   const debouncedQuery = useDebounce(query, 30);
+  const pagesSize = useArrayLength(fetchPosts);
 
   //-react query usecase implementaion
   const { data, error, isLoading, isPlaceholderData } = useQuery({
@@ -44,27 +46,9 @@ const HomePage = ({
   return (
     <>
       <Header title="Tiny blog" caseName="title" />
-      {/* Search  */}
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Blog Search</h1>
-        {/* Search Bar */}
-        <input
-          type="text"
-          placeholder="Search posts by title..."
-          className="border border-gray-300 rounded p-2 mb-4 w-full"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </div>
+      {`Total Posts: ${pagesSize ? pagesSize : "Calculating ..."}`}
       {/* Blog Section */}
       <div className="relative">
-        {/* Optional loading indicator */}
-        {/* sadfasdf
-        {isFetching && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <p>Loading...</p>
-          </div>
-        )} */}
         {error instanceof Error && <p>Error: {error.message}</p>}
         <PostList posts={debouncedQuery ? data?.data : posts.data} />
       </div>

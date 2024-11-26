@@ -1,8 +1,8 @@
 import { BackButton } from "@/Components/BackButton/BackButton";
 import Header from "@/Components/Header/Header";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createNewPost } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
+
 import { useCreatePost } from "@/lib/hooks/useCreatePosts";
 
 const CreatePost = () => {
@@ -10,7 +10,7 @@ const CreatePost = () => {
   const [body, setBody] = useState("");
   const queryClient = useQueryClient();
 
-  const createPost = useCreatePost();
+  const createPostMutation = useCreatePost();
 
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +20,11 @@ const CreatePost = () => {
     }
 
     //-Actual mutation
-    createPost.mutate(
+    createPostMutation.mutate(
       { title, body },
       {
         onSettled: () => {
-          createPost.reset;
+          createPostMutation.reset;
         },
       }
     );
@@ -36,9 +36,9 @@ const CreatePost = () => {
       <div className="container mx-auto p-6">
         <BackButton href={".."} color="text-purple-500" />
         <h1 className="text-2xl font-bold mb-4">Create a New Post</h1>
-        {createPost.isIdle && <h1>idle....</h1>}
-        {createPost.isPending && <h1>pending....</h1>}
-        {createPost.isSuccess && <h1>Success!!</h1>}
+        {createPostMutation.isIdle && <h1>idle....</h1>}
+        {createPostMutation.isPending && <h1>pending....</h1>}
+        {createPostMutation.isSuccess && <h1>Success!!</h1>}
         {/* Form */}
         <form onSubmit={handleCreatePost} className="space-y-4">
           <div>
